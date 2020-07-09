@@ -18,7 +18,8 @@ const dbconfig = {
     database: SQL_DATABASE,
     port: SQL_PORT,
     options: {
-        encrypt: true
+        encrypt: true,
+        enableArithAbort: true
     }
 }
 

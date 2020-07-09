@@ -1,0 +1,47 @@
+<%- include("../partials/header") %> 
+<div class="container">
+    <h1 class="text-center my-4"> DANH SÁCH KHOÁ HỌC </h1>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tên khoá học</th>
+                    <th>Ngày tạo</th>
+                    <th>Rating</th>
+                    <th>Thời lượng</th>
+                    <th>Giá</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i = 0; i < courses.length; i++) { %>
+                    <tr>
+                        <th><%= i + 1 %> </th>
+                        <td><%= courses[i].Course_name %></td>
+                        <td><%= moment(courses[i].Date_created).format('DD/MM/YYYY'); %></td>
+                        <td><%= courses[i].Rating %></td>
+                        <td><%= courses[i].Length %></td>
+                        <td><%= courses[i].Price%> $</td>
+                        <td>
+                            <a href="/courses/<%= courses[i].Id %>/edit" class="btn py-0 pl-0 text-primary"><i class="far fa-edit"></i></a>
+                            <form class="d-inline" action="/courses/<%= courses[i].Id %>?_method=DELETE" method="POST">
+                                <button class="btn py-0 pl-0 text-danger"><i class="far fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                        <!-- <td>
+                            <div class="custom-control custom-checkbox pl-5">
+                                <input type="checkbox" class="custom-control-input" id="customCheck" form="reg-form" name="reg[]">
+                                <label class="custom-control-label" for="customCheck"> </label>
+                            </div>
+                        </td> -->
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    
+    <a href="/courses/new" class="btn btn-success">Tạo khoá học mới</a>
+</div>
+<%- include("../partials/footer") %> 
