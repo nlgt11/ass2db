@@ -1,0 +1,33 @@
+<%- include("../partials/header") %> 
+<div class="container">
+    <h1 class="my-4 text-center">Chỉnh sửa thông tin khoá học</h1>
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <form action="/courses/<%= course.Id %>?_method=PUT" method="POST">
+                <label>Tên môn học</label>
+                <div class="form-group">
+                    <input type="text" value="<%= course.Course_name %>" name="course[Course_name]" class="form-control">
+                </div>
+                <label>Thời lượng</label>
+                <div class="form-group d-flex">
+                    <input type="number" min="0" max="500" placeholder="HH" name="course[HH]" class="form-control" value=<%= moment(course.Length).format('HH') %>>
+                    <input type="number" min="0" max="60" placeholder="MM" name="course[MM]" class="form-control" value=<%= moment(course.Length).format('MM') %>>
+                    <input type="number" min="0" max="60" placeholder="SS" name="course[SS]" class="form-control" value=<%= moment(course.Length).format('SS') %> >
+                </div>
+                <label>Giá</label>
+                <div class="form-group">
+                    <input type="number" placeholder="Giá" name="course[Price]" class="form-control" value=<%= course.Price %>>
+                </div>
+                <label>Rating</label>
+                <div class="form-group">
+                    <input type="number" step=any min="0" max="5" placeholder="Giá" name="course[Rating]" class="form-control" value=<%= course.Rating %>>
+                </div>
+                <button class="btn btn-primary w-100">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    console.log(course.Course_name)
+</script>
+<%- include("../partials/footer") %> 

@@ -26,6 +26,60 @@ router.get('/new', (req, res) => {
     res.render('courses/new')
 });
 
+router.get('/:id/edit', async (req, res) => {
+    try {
+        let pool = await sql.connect(dbconfig);
+        let result = await pool.request()
+                            .query(`SELECT * FROM el.Course WHERE Id=${req.params.id}`);
+        //console.log(result);
+        console.log(result.recordset[0]);
+        res.render('courses/edit', { course: result.recordset[0], moment: moment });
+
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+router.put('/:id', [
+    check('course.Course_name', 'Tên đang trống').not().isEmpty(),
+    check('course.Price', 'Giá đang trống').not().isEmpty(),
+    check('course.HH', 'Thời lượng đang trống').not().isEmpty(),
+    check('course.MM', 'Thời lượng đang trống').not().isEmpty(),
+    check('course.SS', 'Thời lượng đang trống').not().isEmpty(),
+] , async (req, res) => {
+    const result = validationResult(req);
+    
+    if (!result.isEmpty()) {
+        var errors = result.errors;
+        console.log(errors);
+        for (var key in errors) {
+            console.log(errors[key].msg);
+            req.flash("error", errors[key].msg);
+        }
+        return res.redirect('/courses/new')
+    } else {
+        const { Course_name, HH, MM, SS, Price, Rating } = req.body.course;
+        const Date_created = Date.now();
+        try {
+            let pool = await sql.connect(dbconfig);
+            let result1 = await pool.request()
+                                    .input('id', sql.Int, req.params.id)
+                                    .input('name', sql.NVarChar(100), Course_name)
+                                    .input('price', sql.Float, Price)
+                                    .input('length', sql.Time(7), Date(`${HH}:${MM}:${SS}`))
+                                    .input('date', sql.Date, Date(Date_created))
+                                    .input('rating', sql.Float, Rating)
+                                    .execute('el.updateDataToCourse')
+            req.flash('success', `Cập nhật thành công khoá học ${Course_name}`)
+            res.redirect('/courses');
+        } catch (e) {
+            req.flash('error', `${e}`)
+            console.log(e);
+        }
+    }
+
+});
+
 router.get('/:id', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
@@ -34,17 +88,19 @@ router.get('/:id', async (req, res) => {
         //console.log(result);
         res.render('courses/index', { courses: result.recordset, moment: moment });
 
-    } catch (err) {
-        console.log(err);
+    } catch (e) {
+        req.flash('error', `${e}`)
+        console.log(e);
     }
 });
 
+
 router.post('/', [
-    check('req.body.course.Course_name', 'Tên đang trống').not().isEmpty(),
-    check('req.body.course.Price', 'Giá đang trống').not().isEmpty(),
-    check('req.body.course.HH', 'Thời lượng đang trống').not().isEmpty(),
-    check('req.body.course.MM', 'Thời lượng đang trống').not().isEmpty(),
-    check('req.body.course.SS', 'Thời lượng đang trống').not().isEmpty(),
+    check('course.Course_name', 'Tên đang trống').not().isEmpty(),
+    check('course.Price', 'Giá đang trống').not().isEmpty(),
+    check('course.HH', 'Thời lượng đang trống').not().isEmpty(),
+    check('course.MM', 'Thời lượng đang trống').not().isEmpty(),
+    check('course.SS', 'Thời lượng đang trống').not().isEmpty(),
 ] ,async (req, res) => {
     const result = validationResult(req);
     
@@ -57,10 +113,9 @@ router.post('/', [
         }
         return res.redirect('/courses/new')
     } else {
-        const { Course_name, HH, MM, SS, Price } = req.body.course;
+        const { Course_name, HH, MM, SS, Price, Rating } = req.body.course;
         const Date_created = Date.now();
         try {
-            console.log('at leastr i tried')
             let pool = await sql.connect(dbconfig);
             // let result = await pool.request()
             //                         .input('name', sql.NVarChar(100), Course_name)
@@ -73,16 +128,17 @@ router.post('/', [
                                     .input('price', sql.Float, Price)
                                     .input('length', sql.Time(7), Date(`${HH}:${MM}:${SS}`))
                                     .input('date', sql.Date, Date(Date_created))
-                                    .input('rating', sql.Int, 0)
+                                    .input('rating', sql.Float, Rating)
                                     .execute('el.addDataToCourse')
-            req.flash('success', `Thêm thành công khoá học ${name}`)
+            req.flash('success', `Thêm thành công khoá học ${Course_name}`)
             res.redirect('/courses');
         } catch (e) {
+            req.flash('error', `${e}`)
             console.log(e);
         }
     }
 
-})
+});
 
 
 
