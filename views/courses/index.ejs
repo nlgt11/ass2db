@@ -19,7 +19,7 @@
                 <% for(let i = 0; i < courses.length; i++) { %>
                     <tr>
                         <th><%= i + 1 %> </th>
-                        <td><%= courses[i].Course_name %></td>
+                        <td> <a href="/courses/<%= courses[i].Id %> "><%= courses[i].Course_name %></a> </td>
                         <td><%= moment(courses[i].Date_created).format('DD/MM/YYYY'); %></td>
                         <td><%= moment(courses[i].Length).format('HH:MM'); %></td>
                         <td class="text-right"><%= courses[i].Price%> VND</td>
@@ -40,16 +40,4 @@
     
     <a href="/courses/new" class="btn btn-success">Tạo khoá học mới</a>
 </div>
-<script>
-    formatMoney();
-    function formatMoney(){
-    $('.vnMoney').each(function () {
-        var item = $(this).text();
-        item = item.replace(",","");
-        var num = Number(item).toLocaleString('en');    
-        
-        $(this).text(num);
-    });
-}
-</script>
 <%- include("../partials/footer") %> 

@@ -6,5 +6,17 @@
             $('#example').DataTable();
         });
     </script>
+    <!-- <script>
+        formatMoney();
+        function formatMoney(){
+            $('.vnMoney').each(function () {
+                var item = $(this).text();
+                item = item.replace(",","");
+                var num = Number(item).toLocaleString('en');    
+                
+                $(this).text(num);
+            });
+        }
+    </script> -->
 </body>
 </html>

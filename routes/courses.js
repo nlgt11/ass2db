@@ -22,7 +22,6 @@ router.get('/', async (req, res) => {
                 .execute('soLearner')
             courses[i].Learner = Object.values(result2.output)[0];
         }
-        console.log(courses);
         res.render('courses/index', { courses: result.recordset, moment: moment });
 
     } catch (err) {
@@ -103,14 +102,33 @@ router.delete('/:id', async(req, res) => {
         res.redirect('back');
     }
 })
+router.post('/:id/search', async (req, res) => {
+    try {
+        let pool = await sql.connect(dbconfig);
+        var start = new Date(req.body.date);
+        let result = await pool.request()
+                            .input('Course_id', sql.Int, req.params.id)
+                            .input('Date', sql.Date, start)
+                            .execute(`layTheory`);
+        console.log(result);
+        res.render('courses/detail', { courseId: req.params.id, theories: result.recordset, moment: moment });
 
+    } catch (e) {
+        req.flash('error', `${e}`)
+        console.log(e);
+    }
+});
 router.get('/:id', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
+        var start = new Date();
+        start.setHours(0,0,0,0);
         let result = await pool.request()
-                            .query(`SELECT * FROM el.Course`);
-        //console.log(result);
-        res.render('courses/index', { courses: result.recordset, moment: moment });
+                            .input('Course_id', sql.Int, req.params.id)
+                            .input('Date', sql.Date, start)
+                            .execute(`layTheory`);
+        console.log(result);
+        res.render('courses/detail', { courseId: req.params.id, theories: result.recordset, moment: moment });
 
     } catch (e) {
         req.flash('error', `${e}`)
@@ -141,12 +159,6 @@ router.post('/', [
         const Date_created = Date.now();
         try {
             let pool = await sql.connect(dbconfig);
-            // let result = await pool.request()
-            //                         .input('name', sql.NVarChar(100), Course_name)
-            //                         .input('price', sql.Float, Price)
-            //                         .input('length', sql.Time(7), Date(Length))
-            //                         .input('date', sql.Date, Date(Date_created))
-            //                         .query(`INSERT INTO el.Course (Course_name, Length, Price, Rating, Date_created) VALUES (@name, @length, @price, 0, @date);`)
             let result1 = await pool.request()
                                     .input('name', sql.NVarChar(100), Course_name)
                                     .input('price', sql.Float, Price)

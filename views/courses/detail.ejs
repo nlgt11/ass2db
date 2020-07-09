@@ -1,0 +1,44 @@
+<%- include("../partials/header") %> 
+<div class="container">
+    <h1 class="text-center my-4"> Danh sách bài giảng  </h1>
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <form action="/courses/<%= courseId %>/search " method="POST" class="d-flex justify-content-between align-items-stretch">
+                <label>Bài giảng cập nhật sau ngày</label>
+                <div class="form-group">
+                    <input type="date" name="date" class="form-control">
+                </div>
+                <button class="btn p-0 my-0 align-text-top"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+    <% if (theories) { %>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên bài giảng</th>
+                        <th>Ngày tạo</th>
+                        <th>Thể loại</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <% for(let i = 0; i < theories.length; i++) { %>
+                        <tr>
+                            <th><%= i + 1 %> </th>
+                            <td><%= theories[i].Name %></td>
+                            <td><%= moment(theories[i].Date_created).format('DD/MM/YYYY'); %></td>
+                            <td><%= theories[i].Type%></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <div class="jumbotron">Không tìm thấy bài giảng phù hợp</div>
+        <a href="/courses" class="btn btn-primary">Trở về</a>
+    <% } %> 
+</div>
+<%- include("../partials/footer") %> 
