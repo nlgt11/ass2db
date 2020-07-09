@@ -1,65 +1,18 @@
 <%- include("../partials/header") %> 
 <div class="container">
     <h1 class="text-center my-4"> DANH SÁCH KHOÁ HỌC </h1>
-    <div class="panel panel-defaultbg-white border-bottom box-shadow mb-3 d-flex flex-column">
-        <div class="container d-flex justify-content-between">
-            <h2 class="navbar-brand">
-                Wanna find something?
-            </h2>
-            <div class="panel panel-default d-flex flex-row">
-                <button class="btn btn-light pull-right" data-toggle="collapse" data-target="#collapse1">
-                    <svg class="bi bi-search" width="1em" height="1em" viewBox="0 0 16 16"  xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z" />
-                        <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <div id="collapse1" class="panel-collapse collapse" style="padding:10px 10px 10px 10px;">
-            <form method="get" asp-controller="Foodcourt" asp-action="Details" style="width:100%">
-                <div class="form-group row">
-                    <div class="col">
-                        <label>Food name</label>
-                        <input name="searchString" type="Text" class="form-control" placeholder="Food name">
-                    </div>
-                </div>
-    
-                <div class="form-group row">
-                    <div class="col">
-                        <label>Price from:</label>
-                        <input name="priceFrom" type="Number" class="form-control" placeholder="10.000">
-                    </div>
-                    <div class="col">
-                        <label>To:</label>
-                        <input name="priceTo" type="Number" class="form-control" placeholder="500.000">
-                    </div>
-                </div>
-    
-                <div class="form-group row">
-                    <div class="col">
-                        <label>Discount from (%)</label>
-                        <input name="discountFrom" type="Number" class="form-control" placeholder="50">
-                    </div>
-                </div>
-    
-                <div class="form-row">
-                    <button type="submit" class="btn btn-primary btn-block" >Search now</button>
-                </div>
-    
-            </form>
-        </div>
-    </div>
     <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table table-hover table-striped table-bordered" id="example">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Tên khoá học</th>
                     <th>Ngày tạo</th>
-                    <th>Rating</th>
                     <th>Thời lượng</th>
-                    <th>Giá</th>
-                    <th>Action</th>
+                    <th class="text-center">Giá</th>
+                    <th>Rating</th>
+                    <th>Số người học</th>
+                    <th>Chỉnh sửa</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,9 +21,10 @@
                         <th><%= i + 1 %> </th>
                         <td><%= courses[i].Course_name %></td>
                         <td><%= moment(courses[i].Date_created).format('DD/MM/YYYY'); %></td>
-                        <td><%= courses[i].Rating %></td>
                         <td><%= moment(courses[i].Length).format('HH:MM'); %></td>
-                        <td><%= courses[i].Price%> $</td>
+                        <td class="text-right"><%= courses[i].Price%> VND</td>
+                        <td><%= courses[i].Rating %></td>
+                        <td><%= courses[i].Learner %></td>
                         <td>
                             <a href="/courses/<%= courses[i].Id %>/edit" class="btn py-0 pl-0 text-primary"><i class="far fa-edit"></i></a>
                             <form class="d-inline" action="/courses/<%= courses[i].Id %>?_method=DELETE" method="POST" onsubmit="return confirm('Bạn có chắc là muốn xoá khoá học này?');">
@@ -86,4 +40,16 @@
     
     <a href="/courses/new" class="btn btn-success">Tạo khoá học mới</a>
 </div>
+<script>
+    formatMoney();
+    function formatMoney(){
+    $('.vnMoney').each(function () {
+        var item = $(this).text();
+        item = item.replace(",","");
+        var num = Number(item).toLocaleString('en');    
+        
+        $(this).text(num);
+    });
+}
+</script>
 <%- include("../partials/footer") %> 

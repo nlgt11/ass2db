@@ -15,6 +15,14 @@ router.get('/', async (req, res) => {
         let result = await pool.request()
                             .query(`SELECT * FROM el.Course`);
 
+        let courses = result.recordset;
+        for (var i = 0; i < courses.length; i++) {
+            let result2 = await pool.request()
+                .input('Course_id', sql.Int, courses[i].Id)
+                .execute('soLearner')
+            courses[i].Learner = Object.values(result2.output)[0];
+        }
+        console.log(courses);
         res.render('courses/index', { courses: result.recordset, moment: moment });
 
     } catch (err) {
