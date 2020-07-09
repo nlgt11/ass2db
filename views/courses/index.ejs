@@ -21,7 +21,7 @@
                         <td><%= courses[i].Course_name %></td>
                         <td><%= moment(courses[i].Date_created).format('DD/MM/YYYY'); %></td>
                         <td><%= courses[i].Rating %></td>
-                        <td><%= courses[i].Length %></td>
+                        <td><%= moment(courses[i].Length).format('HH:MM'); %></td>
                         <td><%= courses[i].Price%> $</td>
                         <td>
                             <a href="/courses/<%= courses[i].Id %>/edit" class="btn py-0 pl-0 text-primary"><i class="far fa-edit"></i></a>
@@ -29,12 +29,6 @@
                                 <button class="btn py-0 pl-0 text-danger"><i class="far fa-trash-alt"></i></button>
                             </form>
                         </td>
-                        <!-- <td>
-                            <div class="custom-control custom-checkbox pl-5">
-                                <input type="checkbox" class="custom-control-input" id="customCheck" form="reg-form" name="reg[]">
-                                <label class="custom-control-label" for="customCheck"> </label>
-                            </div>
-                        </td> -->
                     </tr>
                 <% } %>
             </tbody>
