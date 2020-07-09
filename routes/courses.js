@@ -80,6 +80,22 @@ router.put('/:id', [
 
 });
 
+router.delete('/:id', async(req, res) => {
+    try {
+        let pool = await sql.connect(dbconfig);
+        let result = await pool.request()
+                            .input('id', sql.Int, req.params.id)
+                            .execute(`el.deleteDataFromCourse`);
+        req.flash('success', 'Xoá khoá học thành công');
+        res.redirect('/courses');
+
+    } catch (err) {
+        console.log(err);
+        req.flash('error', err);
+        res.redirect('back');
+    }
+})
+
 router.get('/:id', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
