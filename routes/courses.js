@@ -105,14 +105,20 @@ router.delete('/:id', async (req, res) => {
 router.post('/:id/search', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
-        var start = new Date(req.body.date);
+        var start;
+        start = new Date(req.body.date);
+        console.log(req.body.date)
+        if (req.body.date == '') {
+            start = new Date();
+            start.setHours(0, 0, 0, 0);
+        }
         let result = await pool.request()
             .input('Course_id', sql.Int, req.params.id)
             .input('Date', sql.Date, start)
             .output('Return_table', sql.NVarChar(sql.MAX))
             .execute(`layTheory`);
         console.log(result);
-        res.render('courses/detail', { courseId: req.params.id, theories: JSON.parse(result.output.Return_table), moment: moment });
+        res.render('courses/detailSearch', { courseId: req.params.id, theories: JSON.parse(result.output.Return_table), moment: moment });
 
     } catch (e) {
         req.flash('error', `${e}`)
@@ -122,16 +128,19 @@ router.post('/:id/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
-        var start = new Date();
-        start.setHours(0, 0, 0, 0);
-        // let result = null
         let result = await pool.request()
-            .input('Course_id', sql.Int, req.params.id)
-            .input('Date', sql.Date, start)
-            .output('Return_table', sql.NVarChar(sql.MAX))
-            .execute(`layTheory`);
-        console.log(JSON.parse(result.output.Return_table).length);
-        res.render('courses/detail', { courseId: req.params.id, theories: JSON.parse(result.output.Return_table), moment: moment });
+            .query(`select * from el.Theory where el.Theory.Course_id = ${req.params.id}`);
+        res.render('courses/detail', { courseId: req.params.id, theories: result.recordset, moment: moment });
+        // var start = new Date();
+        // start.setHours(0, 0, 0, 0);
+        // // let result = null
+        // let result = await pool.request()
+        //     .input('Course_id', sql.Int, req.params.id)
+        //     .input('Date', sql.Date, start)
+        //     .output('Return_table', sql.NVarChar(sql.MAX))
+        //     .execute(`layTheory`);
+        // console.log(JSON.parse(result.output.Return_table));
+        // res.render('courses/detail', { courseId: req.params.id, theories: JSON.parse(result.output.Return_table), moment: moment });
 
     } catch (e) {
         req.flash('error', `${e}`)

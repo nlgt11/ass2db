@@ -21,6 +21,9 @@
                         <th>Tên bài giảng</th>
                         <th>Thể loại</th>
                         <th>Ngày tạo</th>
+                        <th># cập nhật</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Phiên bản</th>
                     </tr>
                 </thead>
                 
@@ -31,6 +34,9 @@
                             <td><%= theories[i].Name %></td>
                             <td><%= theories[i].Type%></td>
                             <td><%= moment(theories[i].Date_created).format('DD/MM/YYYY'); %></td>
+                            <td><%= theories[i].Update_id%></td>
+                            <td><%= moment(theories[i].Date).format('DD/MM/YYYY'); %></td>
+                            <td><%= theories[i].Version%></td>
                         </tr>
                     <% } %>
                 </tbody>
