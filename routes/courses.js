@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mssql = require('mssql');
 const moment = require('moment');
-const {check,validationResult} = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
 const config = require('../config');
 const sql = require('mssql');
@@ -13,8 +13,8 @@ router.get('/', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
         let result = await pool.request()
-                            .query(`SELECT * FROM el.Course`);
-
+            .query(`SELECT * FROM el.Course`);
+        console.log(result)
         let courses = result.recordset;
         for (var i = 0; i < courses.length; i++) {
             let result2 = await pool.request()
@@ -37,7 +37,7 @@ router.get('/:id/edit', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
         let result = await pool.request()
-                            .query(`SELECT * FROM el.Course WHERE Id=${req.params.id}`);
+            .query(`SELECT * FROM el.Course WHERE Id=${req.params.id}`);
         //console.log(result);
         console.log(result.recordset[0]);
         res.render('courses/edit', { course: result.recordset[0], moment: moment });
@@ -53,9 +53,9 @@ router.put('/:id', [
     check('course.HH', 'Thời lượng đang trống').not().isEmpty(),
     check('course.MM', 'Thời lượng đang trống').not().isEmpty(),
     check('course.SS', 'Thời lượng đang trống').not().isEmpty(),
-] , async (req, res) => {
+], async (req, res) => {
     const result = validationResult(req);
-    
+
     if (!result.isEmpty()) {
         var errors = result.errors;
         console.log(errors);
@@ -70,13 +70,13 @@ router.put('/:id', [
         try {
             let pool = await sql.connect(dbconfig);
             let result1 = await pool.request()
-                                    .input('id', sql.Int, req.params.id)
-                                    .input('name', sql.NVarChar(100), Course_name)
-                                    .input('price', sql.Float, Price)
-                                    .input('length', sql.Time(7), Date(`${HH}:${MM}:${SS}`))
-                                    .input('date', sql.Date, Date(Date_created))
-                                    .input('rating', sql.Float, Rating)
-                                    .execute('el.updateDataToCourse')
+                .input('id', sql.Int, req.params.id)
+                .input('name', sql.NVarChar(100), Course_name)
+                .input('price', sql.Float, Price)
+                .input('length', sql.Time(7), Date(`${HH}:${MM}:${SS}`))
+                .input('date', sql.Date, Date(Date_created))
+                .input('rating', sql.Float, Rating)
+                .execute('el.updateDataToCourse')
             req.flash('success', `Cập nhật thành công khoá học ${Course_name}`)
             res.redirect('/courses');
         } catch (e) {
@@ -87,12 +87,12 @@ router.put('/:id', [
 
 });
 
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
         let result = await pool.request()
-                            .input('id', sql.Int, req.params.id)
-                            .execute(`el.deleteDataFromCourse`);
+            .input('id', sql.Int, req.params.id)
+            .execute(`el.deleteDataFromCourse`);
         req.flash('success', 'Xoá khoá học thành công');
         res.redirect('/courses');
 
@@ -107,11 +107,12 @@ router.post('/:id/search', async (req, res) => {
         let pool = await sql.connect(dbconfig);
         var start = new Date(req.body.date);
         let result = await pool.request()
-                            .input('Course_id', sql.Int, req.params.id)
-                            .input('Date', sql.Date, start)
-                            .execute(`layTheory`);
+            .input('Course_id', sql.Int, req.params.id)
+            .input('Date', sql.Date, start)
+            .output('Return_table', sql.NVarChar(sql.MAX))
+            .execute(`layTheory`);
         console.log(result);
-        res.render('courses/detail', { courseId: req.params.id, theories: result.recordset, moment: moment });
+        res.render('courses/detail', { courseId: req.params.id, theories: JSON.parse(result.output.Return_table), moment: moment });
 
     } catch (e) {
         req.flash('error', `${e}`)
@@ -122,13 +123,15 @@ router.get('/:id', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
         var start = new Date();
-        start.setHours(0,0,0,0);
+        start.setHours(0, 0, 0, 0);
+        // let result = null
         let result = await pool.request()
-                            .input('Course_id', sql.Int, req.params.id)
-                            .input('Date', sql.Date, start)
-                            .execute(`layTheory`);
-        console.log(result);
-        res.render('courses/detail', { courseId: req.params.id, theories: result.recordset, moment: moment });
+            .input('Course_id', sql.Int, req.params.id)
+            .input('Date', sql.Date, start)
+            .output('Return_table', sql.NVarChar(sql.MAX))
+            .execute(`layTheory`);
+        console.log(JSON.parse(result.output.Return_table).length);
+        res.render('courses/detail', { courseId: req.params.id, theories: JSON.parse(result.output.Return_table), moment: moment });
 
     } catch (e) {
         req.flash('error', `${e}`)
@@ -143,9 +146,9 @@ router.post('/', [
     check('course.HH', 'Thời lượng đang trống').not().isEmpty(),
     check('course.MM', 'Thời lượng đang trống').not().isEmpty(),
     check('course.SS', 'Thời lượng đang trống').not().isEmpty(),
-] ,async (req, res) => {
+], async (req, res) => {
     const result = validationResult(req);
-    
+
     if (!result.isEmpty()) {
         var errors = result.errors;
         console.log(errors);
@@ -160,12 +163,12 @@ router.post('/', [
         try {
             let pool = await sql.connect(dbconfig);
             let result1 = await pool.request()
-                                    .input('name', sql.NVarChar(100), Course_name)
-                                    .input('price', sql.Float, Price)
-                                    .input('length', sql.Time(7), Date(`${HH}:${MM}:${SS}`))
-                                    .input('date', sql.Date, Date(Date_created))
-                                    .input('rating', sql.Float, Rating)
-                                    .execute('el.addDataToCourse')
+                .input('name', sql.NVarChar(100), Course_name)
+                .input('price', sql.Float, Price)
+                .input('length', sql.Time(7), Date(`${HH}:${MM}:${SS}`))
+                .input('date', sql.Date, Date(Date_created))
+                .input('rating', sql.Float, Rating)
+                .execute('el.addDataToCourse')
             req.flash('success', `Thêm thành công khoá học ${Course_name}`)
             res.redirect('/courses');
         } catch (e) {
