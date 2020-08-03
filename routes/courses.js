@@ -26,6 +26,7 @@ router.get('/', async (req, res) => {
 
     } catch (err) {
         console.log(err);
+
     }
 });
 
@@ -106,29 +107,34 @@ router.post('/:id/search', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
         var start = new Date(req.body.date);
+        let courseName = await pool.request().query(`select Course_name from el.Course where Id=${req.params.id}`);
+        name = courseName.recordset[0].Course_name;
         let result = await pool.request()
                             .input('Course_id', sql.Int, req.params.id)
                             .input('Date', sql.Date, start)
                             .execute(`layTheory`);
         console.log(result);
-        res.render('courses/detail', { courseId: req.params.id, theories: result.recordset, moment: moment });
+        res.render('courses/detail', { courseName: name, courseId: req.params.id, theories: result.recordset, moment: moment });
 
     } catch (e) {
         req.flash('error', `${e}`)
         console.log(e);
     }
+
 });
 router.get('/:id', async (req, res) => {
     try {
         let pool = await sql.connect(dbconfig);
         var start = new Date();
         start.setHours(0,0,0,0);
+        let courseName = await pool.request().query(`select Course_name from el.Course where Id=${req.params.id}`);
+        name = courseName.recordset[0].Course_name;
         let result = await pool.request()
                             .input('Course_id', sql.Int, req.params.id)
                             .input('Date', sql.Date, start)
                             .execute(`layTheory`);
         console.log(result);
-        res.render('courses/detail', { courseId: req.params.id, theories: result.recordset, moment: moment });
+        res.render('courses/detail', { courseName: name, courseId: req.params.id, theories: result.recordset, moment: moment });
 
     } catch (e) {
         req.flash('error', `${e}`)
