@@ -20,7 +20,7 @@
     "express-validator": "^6.6.0",
     "html-duration-picker": "^2.2.7",
     "method-override": "^3.0.0",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "mssql": "^6.2.0"
   },
   "devDependencies": {
